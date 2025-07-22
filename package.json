@@ -1,0 +1,19 @@
+{
+  "name": "site-config-loader",
+  "version": "1.0.0",
+  "description": "ESM based json config loader",
+  "main": "./modules/siteEnvironmentLoader.module.js",
+  "scripts": {
+    "test": "vitest"
+  },
+  "author": "Theodor Heiselberg",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./modules/siteEnvironmentLoader.module.js"
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0",
+    "vitest": "^3.2.4"
+  }
+}
