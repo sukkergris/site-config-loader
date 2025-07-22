@@ -1,4 +1,4 @@
-import { getCurrentHostname } from '/modules/navigation.module.js';
+import { getCurrentHostname } from './navigation.module.js';
 
 /**
  * Simple environment variables loader that works with Nginx-injected configuration
