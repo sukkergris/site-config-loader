@@ -1,6 +1,6 @@
 {
   "name": "site-config-loader",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "ESM based json config loader",
   "main": "./modules/siteEnvironmentLoader.module.js",
   "scripts": {
@@ -10,10 +10,33 @@
   "license": "UNLICENSED",
   "type": "module",
   "exports": {
-    ".": "./modules/siteEnvironmentLoader.module.js"
+    ".": {
+      "import": "./modules/siteEnvironmentLoader.module.js",
+      "default": "./modules/siteEnvironmentLoader.module.js"
+    }
   },
+  "files": [
+    "modules",
+    "README.md",
+    "UNLICENSED"
+  ],
+  "keywords": [
+    "esm",
+    "client",
+    "configuration",
+    "json",
+    "environment-variables",
+    "loader"
+  ],
   "devDependencies": {
+    "esmock": "^2.7.1",
     "jsdom": "^26.1.0",
+    "msw": "^2.10.4",
     "vitest": "^3.2.4"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sukkergris/site-config-loader.git"
+  },
+  "homepage": "https://github.com/sukkergris/site-config-loader#readme"
 }

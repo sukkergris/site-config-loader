@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { getCurrentHostname, reloadPage, setLocationHref } from './navigation.module.js';
+import { getCurrentHostname, reloadPage, setLocationHref } from '../modules/navigation.module.js';
 
 describe('navigation.module.js', () => {
   beforeEach(() => {

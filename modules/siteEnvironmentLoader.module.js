@@ -9,10 +9,17 @@ import { getCurrentHostname } from './navigation.module.js';
  * Load environment variables from Nginx-injected meta tag and JSON files
  * @returns {Promise<Object>} Environment configuration object
  */
-async function loadEnvironmentVariables() {
+async function loadEnvironmentVariables(basePath, baseFileName) {
+  // If basePath is provided but baseFileName is not, use basePath as baseFileName
+  if (!!basePath && baseFileName == undefined) { 
+    baseFileName = basePath;
+    basePath = undefined;
+  }
   // Use fixed configuration paths
-  const baseName = 'environmentVariables';
-  const configPath = '/config';
+  const baseName =  !baseFileName ? 'environmentVariables' : baseFileName;
+  const configPath = !basePath ? '/config' : basePath;
+
+  const loadingDetails = {};
 
   // 1. Detect environment from Nginx-injected meta tag
   const envName =
@@ -28,8 +35,8 @@ async function loadEnvironmentVariables() {
   const mergedConfig = { ...baseConfig, ...envConfig };
 
   // 5. Add environment information to the configuration
-  mergedConfig.environment = envName;
-  mergedConfig.isDevelopment = envName !== 'production';
+  loadingDetails.environment = envName;
+  mergedConfig.__loadingDetails = loadingDetails;
 
   return mergedConfig;
   /**
@@ -48,15 +55,19 @@ async function loadEnvironmentVariables() {
         // );
         return baseConfig;
       } else {
-        console.warn(
+        console.error(
           `Base configuration file not found or couldn't be loaded`,
           baseConfig
         );
-        return {};
+        return {
+          __baseLoaderMsg: { error: 'Base configuration file not found or could not be loaded' }
+        };
       }
     } catch (error) {
       console.error(`Error loading base configuration: ${error.message}`);
-      return {};
+      return {
+        __baseLoaderMsg: { error: `Error loading base configuration: ${error.message}` }
+      };
     }
   }
 
@@ -136,4 +147,5 @@ function detectEnvironmentFromHostname() {
   return 'production';
 }
 
-export { getEnvironmentFromMetaTag, loadEnvironmentVariables };
+export { detectEnvironmentFromHostname, getEnvironmentFromMetaTag, loadEnvironmentVariables };
+
