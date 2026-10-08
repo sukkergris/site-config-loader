@@ -1,6 +1,6 @@
 {
   "name": "site-config-loader",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "ESM based json config loader",
   "main": "./modules/siteEnvironmentLoader.module.js",
   "scripts": {
