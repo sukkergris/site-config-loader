@@ -140,4 +140,4 @@ This sets a short cache duration (1 minute) and ensures config files are publicl
 
 ## 🪪 License
 
-This project is dedicated to the public domain via the [Unlicense](../UNLICENSE). You may use it for any purpose, without restriction.
+This project is dedicated to the public domain via the [Unlicense](./UNLICENSE). You may use it for any purpose, without restriction.

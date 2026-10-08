@@ -7,7 +7,7 @@
     "test": "vitest"
   },
   "author": "Theodor Heiselberg",
-  "license": "UNLICENSED",
+  "license": "Unlicense",
   "type": "module",
   "exports": {
     ".": {
@@ -18,7 +18,7 @@
   "files": [
     "modules",
     "README.md",
-    "UNLICENSED"
+    "UNLICENSE"
   ],
   "keywords": [
     "esm",
