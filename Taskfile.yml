@@ -1,0 +1,54 @@
+version: '3'
+
+tasks:
+  test:
+    desc: Run the test suite once
+    cmds:
+      - npx vitest run
+
+  types:
+    desc: Generate .d.ts files
+    cmds:
+      - npm run build:types
+
+  check:
+    desc: Build types, run tests and preview the package contents
+    cmds:
+      - task: types
+      - task: test
+      - npm pack --dry-run
+
+  git-clean:
+    desc: Fail if the working tree has uncommitted changes
+    internal: true
+    preconditions:
+      - sh: '[ -z "$(git status --porcelain)" ]'
+        msg: Working tree is not clean. Commit or stash your changes first.
+
+  release:
+    desc: "Bump version, build, test, tag and publish. Usage: task release BUMP=patch|minor|major"
+    vars:
+      BUMP: '{{.BUMP | default "patch"}}'
+    preconditions:
+      - sh: '[ "{{.BUMP}}" = "patch" ] || [ "{{.BUMP}}" = "minor" ] || [ "{{.BUMP}}" = "major" ]'
+        msg: BUMP must be patch, minor or major
+    cmds:
+      - task: git-clean
+      - task: check
+      # Rebuilt types must be committed, so the tree has to stay clean after check
+      - cmd: '[ -z "$(git status --porcelain)" ] || { echo "Generated files changed. Commit them first."; exit 1; }'
+      - npm whoami
+      - npm version {{.BUMP}} -m "Release v%s"
+      - npm publish
+      - git push --follow-tags
+
+  release:dry:
+    desc: Show what would be published without publishing
+    cmds:
+      - task: check
+      - npm publish --dry-run
+
+  release:verify:
+    desc: Show the version currently published on npm
+    cmds:
+      - npm view site-config-loader version
