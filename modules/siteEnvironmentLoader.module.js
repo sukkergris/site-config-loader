@@ -7,7 +7,9 @@ import { getCurrentHostname } from './navigation.module.js';
 
 /**
  * Load environment variables from Nginx-injected meta tag and JSON files
- * @returns {Promise<Object>} Environment configuration object
+ * @param {string} [basePath] Base path of the configuration files
+ * @param {string} [baseFileName] Base file name without extension
+ * @returns {Promise<Record<string, any>>} Environment configuration object
  */
 async function loadEnvironmentVariables(basePath, baseFileName) {
   // If basePath is provided but baseFileName is not, use basePath as baseFileName
@@ -19,6 +21,7 @@ async function loadEnvironmentVariables(basePath, baseFileName) {
   const baseName =  !baseFileName ? 'environmentVariables' : baseFileName;
   const configPath = !basePath ? '/config' : basePath;
 
+  /** @type {Record<string, any>} */
   const loadingDetails = {};
 
   // 1. Detect environment from Nginx-injected meta tag
@@ -43,7 +46,7 @@ async function loadEnvironmentVariables(basePath, baseFileName) {
    * Load the base configuration file
    * @param {string} configPath
    * @param {string} baseName
-   * @returns {Promise<Object>}
+   * @returns {Promise<Record<string, any>>}
    */
   async function loadBaseConfig(configPath, baseName) {
     try {
@@ -57,16 +60,16 @@ async function loadEnvironmentVariables(basePath, baseFileName) {
       } else {
         console.error(
           `Base configuration file not found or couldn't be loaded`,
-          baseConfig
+          baseResponse.status
         );
         return {
           __baseLoaderMsg: { error: 'Base configuration file not found or could not be loaded' }
         };
       }
     } catch (error) {
-      console.error(`Error loading base configuration: ${error.message}`);
+      console.error(`Error loading base configuration: ${errorMessage(error)}`);
       return {
-        __baseLoaderMsg: { error: `Error loading base configuration: ${error.message}` }
+        __baseLoaderMsg: { error: `Error loading base configuration: ${errorMessage(error)}` }
       };
     }
   }
@@ -76,13 +79,13 @@ async function loadEnvironmentVariables(basePath, baseFileName) {
    * @param {string} configPath
    * @param {string} baseName
    * @param {string} envName
-   * @returns {Promise<Object>}
+   * @returns {Promise<Record<string, any>>}
    */
   async function loadEnvConfig(configPath, baseName, envName) {
     try {
       console.log(`Loading environment-specific configuration for ${envName}`);
       const envFilename = `${configPath}/${baseName}.${envName}.json`;
-      if (!envName | (envName === 'production')) {
+      if (!envName || (envName === 'production')) {
         // For production, we use the base config only
         // console.log(
         //   'Using base configuration for Production environment',
@@ -106,11 +109,19 @@ async function loadEnvironmentVariables(basePath, baseFileName) {
       }
     } catch (error) {
       console.warn(
-        `Could not load environment-specific config: ${error.message}`
+        `Could not load environment-specific config: ${errorMessage(error)}`
       );
       return {};
     }
   }
+}
+
+/**
+ * @param {unknown} error
+ * @returns {string}
+ */
+function errorMessage(error) {
+  return error instanceof Error ? error.message : String(error);
 }
 
 /**
