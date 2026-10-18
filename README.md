@@ -14,6 +14,7 @@ Supports meta tags (e.g. injected by Nginx) and JSON config files, with automati
 - Detects environment from `<meta name="environment-name">` or hostname
 - Merges configs, with environment-specific values taking precedence
 - Exposes `loadEnvironmentVariables()` (async) and `getEnvironmentFromMetaTag()`
+- Includes TypeScript type declarations
 - ESM-only, browser-first, no dependencies
 
 ## 📖 Motivation
@@ -87,16 +88,30 @@ console.log(customConfig);
 
 ## 🧩 API
 
-### `async loadEnvironmentVariables()`
+### `async loadEnvironmentVariables(basePath?: string, baseFileName?: string)`
 
-Loads and merges config files, returns an object with all config and these extra fields:
+Loads and merges config files and returns `Promise<Record<string, any>>` with all config values plus:
 
-- `environment`: detected environment name
-- `isDevelopment`: true if not production
+- `__loadingDetails.environment`: detected environment name
+- `__baseLoaderMsg`: only present if the base config could not be loaded (contains an `error` message)
 
 ### `getEnvironmentFromMetaTag()`
 
 Returns the environment name from the meta tag, or `null` if not present.
+
+### `detectEnvironmentFromHostname()`
+
+Returns the environment name detected from the hostname (see below).
+
+### TypeScript
+
+Type declarations are included (`.d.ts`), so no `@types` package is needed.
+
+```ts
+import { loadEnvironmentVariables } from 'site-config-loader';
+
+const config = await loadEnvironmentVariables(); // Record<string, any>
+```
 
 ---
 
